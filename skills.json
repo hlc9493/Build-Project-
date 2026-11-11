@@ -1,0 +1,38 @@
+{
+  "categories": [
+    {
+      "name": "Register and customers",
+      "skills": [
+        "Greets customers and takes an order",
+        "Rings up an order on the register",
+        "Handles cash, cards and refunds",
+        "Hands off mobile and pickup orders"
+      ]
+    },
+    {
+      "name": "Bar",
+      "skills": [
+        "Pulls espresso shots",
+        "Steams milk",
+        "Makes hot drinks",
+        "Makes iced drinks",
+        "Makes blended drinks"
+      ]
+    },
+    {
+      "name": "Food",
+      "skills": [
+        "Warms and serves food",
+        "Answers allergen questions"
+      ]
+    },
+    {
+      "name": "Cleaning and closing",
+      "skills": [
+        "Mixes and checks sanitizer",
+        "Cleans the espresso machine",
+        "Completes the closing checklist"
+      ]
+    }
+  ]
+}
