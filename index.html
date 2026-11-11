@@ -1,1 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Barista Training Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Barista Training Tracker</h1>
+    <p class="subtitle">What has this trainee covered, and what is left?</p>
+  </header>
 
+  <main>
+    <section class="card">
+      <h2 id="trainee-name">Sample trainee</h2>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <p id="progress-text">Loading skills…</p>
+    </section>
+
+    <!-- app.js fills this in from skills.json -->
+    <div id="checklist"></div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
