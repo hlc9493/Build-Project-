@@ -1,5 +1,6 @@
 // Processing layer: loads the skills, draws the checklist, counts progress.
 // Milestone 2: several trainees, and every tick is saved in this browser.
+// Milestone 3: a "Cover next shift" list, and a way to remove a trainee.
 
 const STORAGE_KEY = "trainingTracker";
 
@@ -10,6 +11,12 @@ const traineeName = document.getElementById("trainee-name");
 const traineeSelect = document.getElementById("trainee-select");
 const addForm = document.getElementById("add-form");
 const newName = document.getElementById("new-name");
+const removeButton = document.getElementById("remove-button");
+const nextCard = document.getElementById("next-card");
+const nextList = document.getElementById("next-list");
+const nextNote = document.getElementById("next-note");
+
+const NEXT_COUNT = 3;     // how many skills to suggest for the next shift
 
 let categories = [];      // filled in from skills.json
 let state = loadState();  // the trainees and what each one has covered
@@ -76,10 +83,25 @@ traineeSelect.addEventListener("change", function () {
   drawEverything();
 });
 
+// Removing a trainee: ask first, because their progress goes with them.
+removeButton.addEventListener("click", function () {
+  const trainee = currentTrainee();
+  if (!trainee) {
+    return;
+  }
+  if (window.confirm("Remove " + trainee.name + " and their progress?")) {
+    state.trainees.splice(state.current, 1);
+    state.current = 0;
+    saveState();
+    drawEverything();
+  }
+});
+
 function drawEverything() {
   drawPicker();
   drawChecklist();
   updateProgress();
+  drawNext();
 }
 
 // Fill the dropdown with one option per trainee.
@@ -96,6 +118,7 @@ function drawPicker() {
 
   const trainee = currentTrainee();
   traineeName.textContent = trainee ? trainee.name : "No trainees yet";
+  removeButton.hidden = !trainee;
 }
 
 // Build one card per category, with one checkbox per skill.
@@ -134,6 +157,7 @@ function drawChecklist() {
         saveState();
         row.classList.toggle("done", box.checked);
         updateProgress();
+        drawNext();
       });
 
       const text = document.createElement("span");
@@ -172,4 +196,47 @@ function updateProgress() {
   progressFill.style.width = percent + "%";
   progressText.textContent =
     done + " of " + total + " skills covered (" + percent + "%)";
+}
+
+// "Cover next shift": the first few skills this trainee has not covered yet,
+// in the same order as skills.json (which is the order I train in).
+function drawNext() {
+  const trainee = currentTrainee();
+  nextCard.hidden = !trainee;
+  nextList.innerHTML = "";
+  nextNote.textContent = "";
+  if (!trainee) {
+    return;
+  }
+
+  const notCovered = [];
+  categories.forEach(function (category) {
+    category.skills.forEach(function (skill) {
+      if (!trainee.done.includes(skill)) {
+        notCovered.push({ skill: skill, category: category.name });
+      }
+    });
+  });
+
+  if (notCovered.length === 0) {
+    nextNote.textContent = "Every skill is covered. Training is complete.";
+    return;
+  }
+
+  notCovered.slice(0, NEXT_COUNT).forEach(function (item) {
+    const row = document.createElement("li");
+    row.textContent = item.skill;
+
+    const tag = document.createElement("span");
+    tag.className = "skill-category";
+    tag.textContent = item.category;
+    row.appendChild(tag);
+
+    nextList.appendChild(row);
+  });
+
+  const remaining = notCovered.length - NEXT_COUNT;
+  if (remaining > 0) {
+    nextNote.textContent = remaining + " more after these.";
+  }
 }
