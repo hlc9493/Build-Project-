@@ -90,3 +90,43 @@ h2 {
   color: #a3271f;
   font-weight: 600;
 }
+/* Milestone 2: trainee picker and add form */
+
+.field-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+select,
+#add-form input,
+#add-form button {
+  font: inherit;
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid #cfc8bd;
+  border-radius: 8px;
+}
+
+select {
+  width: 100%;
+  background: #ffffff;
+}
+
+#add-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#add-form input {
+  flex: 1;
+  min-width: 0;
+}
+
+#add-form button {
+  background: #2f4a3c;
+  color: #ffffff;
+  border-color: #2f4a3c;
+  cursor: pointer;
+}
