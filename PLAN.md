@@ -14,3 +14,13 @@ Milestones
 3	"Cover next shift" view, phone ready	Tue Nov 17	Shows the next 3 skills not yet covered; no sideways scrolling at phone width
 4	Improvement measured, documents written	Thu Nov 19	Before and after timing recorded; README and reflection finished
 –	Submit on myCourses	Fri Nov 20	Link, plan, status updates and reflection uploaded
+
+### Status update 2 
+
+- **Done:** Milestone 1. The checklist loads its skills from skills.json
+  and the progress bar updates as skills are ticked. Live on GitHub Pages.
+- **Next:** Milestone 2 by Sun Nov 15: add several trainees, and save
+  ticks so a refresh keeps them.
+- **Blocked:** Nothing right now. Known limit: progress saves on one
+  device only, so a second trainer's phone won't see it. Sharing would
+  need a server, which is out of scope.
