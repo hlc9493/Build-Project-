@@ -14,7 +14,18 @@
 
   <main>
     <section class="card">
-      <h2 id="trainee-name">Sample trainee</h2>
+      <label class="field-label" for="trainee-select">Trainee</label>
+      <select id="trainee-select"></select>
+
+      <form id="add-form">
+        <input id="new-name" type="text" placeholder="First name"
+               aria-label="New trainee's first name">
+        <button type="submit">Add trainee</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2 id="trainee-name">No trainees yet</h2>
       <div class="progress-track" aria-hidden="true">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
