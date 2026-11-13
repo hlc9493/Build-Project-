@@ -130,3 +130,38 @@ select {
   border-color: #2f4a3c;
   cursor: pointer;
 }
+/* Milestone 3: "Cover next shift" list and remove button */
+
+#next-list {
+  margin: 0;
+  padding-left: 22px;
+}
+
+#next-list li {
+  padding: 6px 0;
+  font-weight: 600;
+}
+
+.skill-category {
+  display: block;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: #7a736b;
+}
+
+#next-note {
+  margin: 8px 0 0;
+  color: #7a736b;
+}
+
+.remove-button {
+  margin-top: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.9rem;
+  color: #a3271f;
+  text-decoration: underline;
+  cursor: pointer;
+}
