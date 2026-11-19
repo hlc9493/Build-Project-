@@ -2,6 +2,8 @@
   "categories": [
     {
       "name": "Register and customers",
+      "icon": "🧾",
+      "badge": "Register ready",
       "skills": [
         "Greets customers and takes an order",
         "Rings up an order on the register",
@@ -11,6 +13,8 @@
     },
     {
       "name": "Bar",
+      "icon": "☕",
+      "badge": "Bar ready",
       "skills": [
         "Pulls espresso shots",
         "Steams milk",
@@ -21,6 +25,8 @@
     },
     {
       "name": "Food",
+      "icon": "🥐",
+      "badge": "Food ready",
       "skills": [
         "Warms and serves food",
         "Answers allergen questions"
@@ -28,6 +34,8 @@
     },
     {
       "name": "Cleaning and closing",
+      "icon": "🧽",
+      "badge": "Closing ready",
       "skills": [
         "Mixes and checks sanitizer",
         "Cleans the espresso machine",
