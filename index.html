@@ -17,7 +17,10 @@
     </div>
   </header>
 
-  <main>
+  <main class="layout">
+    <!-- Left column on a computer (the top of the page on a phone) -->
+    <div class="side">
+
     <!-- Team overview: every trainee at a glance, for the supervisor -->
     <section class="card" id="team-card" hidden>
       <h2>Team overview</h2>
@@ -53,8 +56,10 @@
       <p id="next-note" class="meta"></p>
     </section>
 
-    <!-- app.js fills this in from skills.json -->
-    <div id="checklist"></div>
+    </div>
+
+    <!-- Right column on a computer: app.js fills this in from skills.json -->
+    <div id="checklist" class="content"></div>
   </main>
 
   <!-- Falling coffee beans when a trainee finishes training -->
