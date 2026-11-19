@@ -8,11 +8,22 @@
 </head>
 <body>
   <header>
-    <h1>Barista Training Tracker</h1>
-    <p class="subtitle">What has this trainee covered, and what is left?</p>
+    <div class="header-inner">
+      <span class="logo" aria-hidden="true">☕</span>
+      <div>
+        <h1>Barista Training Tracker</h1>
+        <p class="subtitle">What has this trainee covered, and what is left?</p>
+      </div>
+    </div>
   </header>
 
   <main>
+    <!-- Team overview: every trainee at a glance, for the supervisor -->
+    <section class="card" id="team-card" hidden>
+      <h2>Team overview</h2>
+      <ul id="team-list" class="team-list"></ul>
+    </section>
+
     <section class="card">
       <label class="field-label" for="trainee-select">Trainee</label>
       <select id="trainee-select"></select>
@@ -26,22 +37,28 @@
 
     <section class="card">
       <h2 id="trainee-name">No trainees yet</h2>
+      <p id="trainee-meta" class="meta"></p>
       <div class="progress-track" aria-hidden="true">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
       <p id="progress-text">Loading skills…</p>
+      <div id="badges" class="badges"></div>
+      <p id="complete-banner" class="complete-banner" hidden>🎉 Training complete!</p>
       <button type="button" id="remove-button" class="remove-button" hidden>Remove this trainee</button>
     </section>
 
     <section class="card" id="next-card" hidden>
       <h2>Cover next shift</h2>
       <ol id="next-list"></ol>
-      <p id="next-note"></p>
+      <p id="next-note" class="meta"></p>
     </section>
 
     <!-- app.js fills this in from skills.json -->
     <div id="checklist"></div>
   </main>
+
+  <!-- Falling coffee beans when a trainee finishes training -->
+  <div id="confetti" class="confetti" aria-hidden="true"></div>
 
   <script src="app.js"></script>
 </body>
