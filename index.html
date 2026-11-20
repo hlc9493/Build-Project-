@@ -12,7 +12,7 @@
       <span class="logo" aria-hidden="true">☕</span>
       <div>
         <h1>Barista Training Tracker</h1>
-        <p class="subtitle">What has this trainee covered, and what is left?</p>
+        <p class="subtitle">How far along is each trainee, and what should they work on next?</p>
       </div>
     </div>
   </header>
@@ -21,41 +21,54 @@
     <!-- Left column on a computer (the top of the page on a phone) -->
     <div class="side">
 
-    <!-- Team overview: every trainee at a glance, for the supervisor -->
-    <section class="card" id="team-card" hidden>
-      <h2>Team overview</h2>
-      <ul id="team-list" class="team-list"></ul>
-    </section>
+      <!-- Team overview: every trainee at a glance, for the supervisor -->
+      <section class="card" id="team-card" hidden>
+        <h2>Team overview</h2>
+        <ul id="team-list" class="team-list"></ul>
+      </section>
 
-    <section class="card">
-      <label class="field-label" for="trainee-select">Trainee</label>
-      <select id="trainee-select"></select>
+      <section class="card">
+        <!-- Shown only when there are no trainees yet: one clear first step -->
+        <div id="welcome">
+          <h2>Add your first trainee</h2>
+          <p class="meta">Type their first name to start tracking their training.</p>
+        </div>
 
-      <form id="add-form">
-        <input id="new-name" type="text" placeholder="First name"
-               aria-label="New trainee's first name">
-        <button type="submit">Add trainee</button>
-      </form>
-    </section>
+        <!-- Shown once there is at least one trainee -->
+        <div id="picker">
+          <label class="field-label" for="trainee-select">Trainee</label>
+          <select id="trainee-select"></select>
+        </div>
 
-    <section class="card">
-      <h2 id="trainee-name">No trainees yet</h2>
-      <p id="trainee-meta" class="meta"></p>
-      <div class="progress-track" aria-hidden="true">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-      <p id="progress-text">Loading skills…</p>
-      <div id="badges" class="badges"></div>
-      <p id="complete-banner" class="complete-banner" hidden>🎉 Training complete!</p>
-      <button type="button" id="remove-button" class="remove-button" hidden>Remove this trainee</button>
-    </section>
+        <form id="add-form">
+          <input id="new-name" type="text" placeholder="First name"
+                 aria-label="New trainee's first name">
+          <button type="submit">Add trainee</button>
+        </form>
+      </section>
 
-    <section class="card" id="next-card" hidden>
-      <h2>Cover next shift</h2>
-      <ol id="next-list"></ol>
-      <p id="next-note" class="meta"></p>
-    </section>
+      <section class="card" id="summary-card" hidden>
+        <h2 id="trainee-name"></h2>
+        <p id="trainee-meta" class="meta"></p>
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <p id="progress-text"></p>
+        <p id="level-counts" class="meta counts"></p>
+        <div id="badges" class="badges"></div>
+        <p id="complete-banner" class="complete-banner" hidden>🎉 Confident on every skill. Training complete!</p>
+        <button type="button" id="remove-button" class="remove-button">Remove this trainee</button>
+      </section>
 
+      <section class="card" id="next-card" hidden>
+        <h2>Work on next shift</h2>
+        <ol id="next-list"></ol>
+        <p id="next-note" class="meta"></p>
+      </section>
+
+      <p id="load-error" class="error" hidden>
+        Could not load skills.json. Open the app from its GitHub Pages link.
+      </p>
     </div>
 
     <!-- Right column on a computer: app.js fills this in from skills.json -->
