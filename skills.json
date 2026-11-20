@@ -5,10 +5,22 @@
       "icon": "🧾",
       "badge": "Register ready",
       "skills": [
-        "Greets customers and takes an order",
-        "Rings up an order on the register",
-        "Handles cash, cards and refunds",
-        "Hands off mobile and pickup orders"
+        {
+          "name": "Greets customers and takes an order",
+          "how": "Model a greeting within a few seconds of a customer arriving. Have the trainee take orders while you stand beside them, then repeat each order back to the customer to confirm it."
+        },
+        {
+          "name": "Rings up an order on the register",
+          "how": "Walk through the register screen once, then have the trainee ring up a few practice orders. Include one with a change, such as an extra shot or different milk."
+        },
+        {
+          "name": "Handles cash, cards and refunds",
+          "how": "Show how to count change back out loud and how a card payment completes. Explain who approves refunds, then have the trainee do one with a supervisor watching."
+        },
+        {
+          "name": "Hands off mobile and pickup orders",
+          "how": "Show where pickup orders print or appear and where finished orders go. Practice checking the name on the label before handing off."
+        }
       ]
     },
     {
@@ -16,11 +28,26 @@
       "icon": "☕",
       "badge": "Bar ready",
       "skills": [
-        "Pulls espresso shots",
-        "Steams milk",
-        "Makes hot drinks",
-        "Makes iced drinks",
-        "Makes blended drinks"
+        {
+          "name": "Pulls espresso shots",
+          "how": "Demonstrate a shot from start to finish, then have the trainee pull several. Check timing and appearance together, and explain when a shot should be remade."
+        },
+        {
+          "name": "Steams milk",
+          "how": "Show the steaming steps and the target temperature. Have the trainee steam milk for a few drinks while you check the texture and temperature each time."
+        },
+        {
+          "name": "Makes hot drinks",
+          "how": "Use the recipe guide for the most-ordered hot drinks. Have the trainee build each one while you watch, then taste and compare."
+        },
+        {
+          "name": "Makes iced drinks",
+          "how": "Show the order to add ingredients and ice, and the cup size marks. Have the trainee make the most-ordered iced drinks with the recipe guide open."
+        },
+        {
+          "name": "Makes blended drinks",
+          "how": "Show how to measure, which blender setting to use and how to clean the pitcher after. Have the trainee make two different blended drinks."
+        }
       ]
     },
     {
@@ -28,8 +55,14 @@
       "icon": "🥐",
       "badge": "Food ready",
       "skills": [
-        "Warms and serves food",
-        "Answers allergen questions"
+        {
+          "name": "Warms and serves food",
+          "how": "Show where food is stored, the warming setting for each item and how to bag or plate it. Have the trainee warm a few items on their own."
+        },
+        {
+          "name": "Answers allergen questions",
+          "how": "Show where allergen information is kept. Practice looking up an item together, and explain when to get a supervisor instead of guessing."
+        }
       ]
     },
     {
@@ -37,9 +70,18 @@
       "icon": "🧽",
       "badge": "Closing ready",
       "skills": [
-        "Mixes and checks sanitizer",
-        "Cleans the espresso machine",
-        "Completes the closing checklist"
+        {
+          "name": "Mixes and checks sanitizer",
+          "how": "Show how to mix sanitizer and test it with a strip. Have the trainee mix a fresh bucket and test it while you watch."
+        },
+        {
+          "name": "Cleans the espresso machine",
+          "how": "Walk through the cleaning steps at close. Have the trainee do them with the checklist in hand on their next closing shift."
+        },
+        {
+          "name": "Completes the closing checklist",
+          "how": "Go through the closing checklist together on one shift. On the next, have the trainee lead it while you check each item."
+        }
       ]
     }
   ]
