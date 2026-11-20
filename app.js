@@ -1,52 +1,76 @@
-// Processing layer: loads the skills, draws the screens, counts progress.
-// Milestone 2: several trainees, and every tick is saved in this browser.
-// Milestone 3: a "Cover next shift" list, and a way to remove a trainee.
+// Processing layer: loads the skills, draws the screens, scores progress.
+// Milestone 2: several trainees, saved in this browser.
+// Milestone 3: a "next shift" list, and a way to remove a trainee.
 // Upgrade: team overview, station-ready badges, dates and notes, celebration.
+// Feedback round: ratings instead of checkboxes, how-to-teach instructions,
+// and a single clear first step when there are no trainees.
 
 const STORAGE_KEY = "trainingTracker";
 const NEXT_COUNT = 3;     // how many skills to suggest for the next shift
 
+// The rating scale. Level 0 means the skill has not been shown yet.
+const LEVELS = ["Not yet", "Shown", "Practicing", "Confident"];
+const TOP = LEVELS.length - 1;
+
 const checklist = document.getElementById("checklist");
-const progressFill = document.getElementById("progress-fill");
-const progressText = document.getElementById("progress-text");
-const traineeName = document.getElementById("trainee-name");
-const traineeMeta = document.getElementById("trainee-meta");
+const welcome = document.getElementById("welcome");
+const picker = document.getElementById("picker");
 const traineeSelect = document.getElementById("trainee-select");
 const addForm = document.getElementById("add-form");
 const newName = document.getElementById("new-name");
-const removeButton = document.getElementById("remove-button");
+const summaryCard = document.getElementById("summary-card");
+const traineeName = document.getElementById("trainee-name");
+const traineeMeta = document.getElementById("trainee-meta");
+const progressFill = document.getElementById("progress-fill");
+const progressText = document.getElementById("progress-text");
+const levelCounts = document.getElementById("level-counts");
 const badgesBox = document.getElementById("badges");
 const completeBanner = document.getElementById("complete-banner");
+const removeButton = document.getElementById("remove-button");
 const nextCard = document.getElementById("next-card");
 const nextList = document.getElementById("next-list");
 const nextNote = document.getElementById("next-note");
 const teamCard = document.getElementById("team-card");
 const teamList = document.getElementById("team-list");
+const loadError = document.getElementById("load-error");
 const confetti = document.getElementById("confetti");
 
 let categories = [];      // filled in from skills.json
-let state = loadState();  // the trainees and what each one has covered
+let state = loadState();  // the trainees and how far along each one is
 let openNote = null;      // the skill whose note box is open, if any
 
-// Data layer, part 1: the list of skills lives in skills.json.
+// Draw the empty-state screen right away, before the skills arrive.
+drawEverything();
+
+// Data layer, part 1: the skills (and how to teach each one) live in skills.json.
 fetch("skills.json")
   .then(function (response) {
     return response.json();
   })
   .then(function (data) {
-    categories = data.categories;
+    categories = data.categories.map(function (category) {
+      return {
+        name: category.name,
+        icon: category.icon,
+        badge: category.badge,
+        // A skill can be plain text, or { "name": ..., "how": ... }
+        skills: category.skills.map(function (skill) {
+          return typeof skill === "string" ? { name: skill, how: "" } : skill;
+        })
+      };
+    });
     drawEverything();
   })
   .catch(function () {
-    progressText.textContent =
-      "Could not load skills.json. Open the app from its GitHub Pages link.";
-    progressText.className = "error";
+    loadError.hidden = false;
   });
 
 // Data layer, part 2: trainee progress lives in this browser's localStorage.
 // Each trainee looks like:
-// { name: "Sam", started: "2026-11-19", done: ["Steams milk"],
-//   dates: { "Steams milk": "2026-11-20" }, notes: { "Steams milk": "needs practice" } }
+// { name: "Sam", started: "2026-11-19",
+//   levels: { "Steams milk": 2 },              0 to 3, see LEVELS
+//   dates:  { "Steams milk": "2026-11-20" },   when the rating last changed
+//   notes:  { "Steams milk": "needs practice on foam" } }
 function loadState() {
   let loaded = { trainees: [], current: 0 };
   try {
@@ -58,12 +82,20 @@ function loadState() {
     // Storage is blocked or the saved text is broken: start fresh.
   }
 
-  // Trainees saved by the older version have no dates or notes yet.
   loaded.trainees.forEach(function (trainee) {
-    trainee.done = trainee.done || [];
+    trainee.levels = trainee.levels || {};
     trainee.dates = trainee.dates || {};
     trainee.notes = trainee.notes || {};
     trainee.started = trainee.started || today();
+    // Older versions used checkboxes: a ticked skill becomes "Shown".
+    if (trainee.done) {
+      trainee.done.forEach(function (skill) {
+        if (!trainee.levels[skill]) {
+          trainee.levels[skill] = 1;
+        }
+      });
+      delete trainee.done;
+    }
   });
   if (!(loaded.current < loaded.trainees.length)) {
     loaded.current = 0;
@@ -81,6 +113,10 @@ function saveState() {
 
 function currentTrainee() {
   return state.trainees[state.current];
+}
+
+function levelOf(trainee, skillName) {
+  return trainee.levels[skillName] || 0;
 }
 
 // ---------- Date helpers ----------
@@ -109,26 +145,30 @@ function dayOfTraining(trainee) {
   return days + 1;
 }
 
-// ---------- Counting ----------
+// ---------- Scoring ----------
 
-function countProgress(trainee) {
+// The training score: every skill is worth 3 points (Confident),
+// so the score is how much of the full 3-points-per-skill is earned.
+function score(trainee) {
+  let points = 0;
   let total = 0;
-  let done = 0;
+  const counts = [0, 0, 0, 0];
   categories.forEach(function (category) {
     category.skills.forEach(function (skill) {
+      const level = levelOf(trainee, skill.name);
+      points = points + level;
       total = total + 1;
-      if (trainee.done.includes(skill)) {
-        done = done + 1;
-      }
+      counts[level] = counts[level] + 1;
     });
   });
-  const percent = total === 0 ? 0 : Math.round((done / total) * 100);
-  return { done: done, total: total, percent: percent };
+  const percent = total === 0 ? 0 : Math.round((points / (total * TOP)) * 100);
+  return { percent: percent, total: total, counts: counts };
 }
 
-function categoryComplete(trainee, category) {
+// A station is ready only when every skill in it is Confident.
+function stationReady(trainee, category) {
   return category.skills.every(function (skill) {
-    return trainee.done.includes(skill);
+    return levelOf(trainee, skill.name) === TOP;
   });
 }
 
@@ -140,7 +180,7 @@ function badgeName(category) {
 function readyBadges(trainee) {
   return categories
     .filter(function (category) {
-      return categoryComplete(trainee, category);
+      return stationReady(trainee, category);
     })
     .map(badgeName);
 }
@@ -152,9 +192,10 @@ addForm.addEventListener("submit", function (event) {
   event.preventDefault();
   const name = newName.value.trim();
   if (name === "") {
+    newName.focus();
     return;
   }
-  state.trainees.push({ name: name, started: today(), done: [], dates: {}, notes: {} });
+  state.trainees.push({ name: name, started: today(), levels: {}, dates: {}, notes: {} });
   state.current = state.trainees.length - 1;
   openNote = null;
   saveState();
@@ -189,35 +230,35 @@ removeButton.addEventListener("click", function () {
   }
 });
 
-// Ticking or unticking a skill: record the date, save, celebrate at 100%.
-function setSkill(trainee, skill, covered) {
-  const wasComplete = countProgress(trainee).percent === 100;
+// Rating a skill. Tapping the rating it already has steps it back to "Not yet",
+// so a mis-tap is easy to undo.
+function rateSkill(trainee, skillName, level) {
+  const wasComplete = score(trainee).percent === 100;
 
-  if (covered) {
-    if (!trainee.done.includes(skill)) {
-      trainee.done.push(skill);
-    }
-    trainee.dates[skill] = today();
+  if (levelOf(trainee, skillName) === level) {
+    level = 0;
+  }
+  if (level === 0) {
+    delete trainee.levels[skillName];
+    delete trainee.dates[skillName];
   } else {
-    trainee.done = trainee.done.filter(function (item) {
-      return item !== skill;
-    });
-    delete trainee.dates[skill];
+    trainee.levels[skillName] = level;
+    trainee.dates[skillName] = today();
   }
   saveState();
   drawEverything();
 
-  if (!wasComplete && countProgress(trainee).percent === 100) {
+  if (!wasComplete && score(trainee).percent === 100) {
     celebrate();
   }
 }
 
-function setNote(trainee, skill, text) {
+function setNote(trainee, skillName, text) {
   const note = text.trim();
   if (note === "") {
-    delete trainee.notes[skill];
+    delete trainee.notes[skillName];
   } else {
-    trainee.notes[skill] = note;
+    trainee.notes[skillName] = note;
   }
   openNote = null;
   saveState();
@@ -227,11 +268,27 @@ function setNote(trainee, skill, text) {
 // ---------- Drawing ----------
 
 function drawEverything() {
+  drawStart();
   drawTeam();
-  drawPicker();
   drawSummary();
   drawNext();
   drawChecklist();
+}
+
+// With no trainees, show only the welcome message and the add form.
+function drawStart() {
+  const empty = state.trainees.length === 0;
+  welcome.hidden = !empty;
+  picker.hidden = empty;
+
+  traineeSelect.innerHTML = "";
+  state.trainees.forEach(function (trainee, index) {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = trainee.name;
+    traineeSelect.appendChild(option);
+  });
+  traineeSelect.value = state.current;
 }
 
 // Team overview: one row per trainee; tapping a row opens that trainee.
@@ -240,7 +297,7 @@ function drawTeam() {
   teamCard.hidden = state.trainees.length === 0;
 
   state.trainees.forEach(function (trainee, index) {
-    const progress = countProgress(trainee);
+    const result = score(trainee);
     const badges = readyBadges(trainee);
 
     const item = document.createElement("li");
@@ -257,13 +314,13 @@ function drawTeam() {
 
     const percent = document.createElement("span");
     percent.className = "team-percent";
-    percent.textContent = progress.percent + "%";
+    percent.textContent = result.percent + "%";
 
     const track = document.createElement("div");
     track.className = "progress-track";
     const fill = document.createElement("div");
     fill.className = "progress-fill";
-    fill.style.width = progress.percent + "%";
+    fill.style.width = result.percent + "%";
     track.appendChild(fill);
 
     const detail = document.createElement("span");
@@ -280,42 +337,27 @@ function drawTeam() {
   });
 }
 
-// Fill the dropdown with one option per trainee.
-function drawPicker() {
-  traineeSelect.innerHTML = "";
-  state.trainees.forEach(function (trainee, index) {
-    const option = document.createElement("option");
-    option.value = index;
-    option.textContent = trainee.name;
-    traineeSelect.appendChild(option);
-  });
-  traineeSelect.value = state.current;
-  traineeSelect.disabled = state.trainees.length === 0;
-}
-
-// The trainee card: name, day of training, progress, badges.
+// The trainee card: name, day of training, score, level counts, badges.
 function drawSummary() {
   const trainee = currentTrainee();
+  summaryCard.hidden = !trainee;
   badgesBox.innerHTML = "";
-  removeButton.hidden = !trainee;
-
   if (!trainee) {
-    traineeName.textContent = "No trainees yet";
-    traineeMeta.textContent = "";
-    progressFill.style.width = "0%";
-    progressText.textContent = "Add a trainee to start.";
-    completeBanner.hidden = true;
     return;
   }
 
-  const progress = countProgress(trainee);
+  const result = score(trainee);
   traineeName.textContent = trainee.name;
   traineeMeta.textContent = "Day " + dayOfTraining(trainee) +
     " of training · started " + niceDate(trainee.started);
-  progressFill.style.width = progress.percent + "%";
-  progressText.textContent = progress.done + " of " + progress.total +
-    " skills covered (" + progress.percent + "%)";
-  completeBanner.hidden = progress.percent !== 100;
+  progressFill.style.width = result.percent + "%";
+  progressText.textContent = "Training score: " + result.percent + "%";
+  levelCounts.textContent =
+    result.counts[3] + " confident · " +
+    result.counts[2] + " practicing · " +
+    result.counts[1] + " shown · " +
+    result.counts[0] + " not yet";
+  completeBanner.hidden = result.percent !== 100;
 
   readyBadges(trainee).forEach(function (badge) {
     const tag = document.createElement("span");
@@ -325,38 +367,43 @@ function drawSummary() {
   });
 }
 
-// "Cover next shift": the first few skills this trainee has not covered yet,
-// in the same order as skills.json (which is the order I train in).
+// "Work on next shift": the skills furthest from Confident, lowest level first.
+// Within a level, skills keep the skills.json order (the order I train in).
 function drawNext() {
   const trainee = currentTrainee();
-  nextCard.hidden = !trainee;
+  nextCard.hidden = !trainee || categories.length === 0;
   nextList.innerHTML = "";
   nextNote.textContent = "";
-  if (!trainee) {
+  if (nextCard.hidden) {
     return;
   }
 
-  const notCovered = [];
+  const toWorkOn = [];
   categories.forEach(function (category) {
     category.skills.forEach(function (skill) {
-      if (!trainee.done.includes(skill)) {
-        notCovered.push({ skill: skill, category: category.name });
+      const level = levelOf(trainee, skill.name);
+      if (level < TOP) {
+        toWorkOn.push({ skill: skill.name, category: category.name, level: level });
       }
     });
   });
+  // Array sort keeps equal items in their original order.
+  toWorkOn.sort(function (a, b) {
+    return a.level - b.level;
+  });
 
-  if (notCovered.length === 0) {
-    nextNote.textContent = "Every skill is covered. Training is complete.";
+  if (toWorkOn.length === 0) {
+    nextNote.textContent = "Confident on every skill. Training is complete.";
     return;
   }
 
-  notCovered.slice(0, NEXT_COUNT).forEach(function (item) {
+  toWorkOn.slice(0, NEXT_COUNT).forEach(function (item) {
     const row = document.createElement("li");
     row.textContent = item.skill;
 
     const tag = document.createElement("span");
     tag.className = "skill-category";
-    tag.textContent = item.category;
+    tag.textContent = item.category + " · " + LEVELS[item.level];
     row.appendChild(tag);
 
     if (trainee.notes[item.skill]) {
@@ -369,13 +416,13 @@ function drawNext() {
     nextList.appendChild(row);
   });
 
-  const remaining = notCovered.length - NEXT_COUNT;
+  const remaining = toWorkOn.length - NEXT_COUNT;
   if (remaining > 0) {
-    nextNote.textContent = remaining + " more after these.";
+    nextNote.textContent = remaining + " more skills still to reach Confident.";
   }
 }
 
-// One card per category, one row per skill, each with a date and a note.
+// One card per category, one row per skill.
 function drawChecklist() {
   checklist.innerHTML = "";
   const trainee = currentTrainee();
@@ -389,7 +436,7 @@ function drawChecklist() {
 
     const heading = document.createElement("h2");
     heading.textContent = (category.icon || "☕") + " " + category.name;
-    if (categoryComplete(trainee, category)) {
+    if (stationReady(trainee, category)) {
       const ready = document.createElement("span");
       ready.className = "ready-tag";
       ready.textContent = "✓ Ready";
@@ -406,48 +453,36 @@ function drawChecklist() {
 }
 
 function drawSkillRow(trainee, skill) {
-  const covered = trainee.done.includes(skill);
-  const note = trainee.notes[skill];
+  const level = levelOf(trainee, skill.name);
+  const note = trainee.notes[skill.name];
 
   const row = document.createElement("div");
-  row.className = "skill-row" + (covered ? " done" : "");
+  row.className = "skill-row level-" + level;
 
-  // The checkbox and skill name
-  const label = document.createElement("label");
-  label.className = "skill";
-
-  const box = document.createElement("input");
-  box.type = "checkbox";
-  box.checked = covered;
-  box.addEventListener("change", function () {
-    setSkill(trainee, skill, box.checked);
-  });
-
-  const text = document.createElement("span");
+  // Skill name, plus its rating and date once it has one
+  const text = document.createElement("div");
+  text.className = "skill-text";
   const name = document.createElement("span");
   name.className = "skill-name";
-  name.textContent = skill;
+  name.textContent = skill.name;
   text.appendChild(name);
 
-  if (covered && trainee.dates[skill]) {
-    const date = document.createElement("span");
-    date.className = "skill-date";
-    date.textContent = "Covered " + niceDate(trainee.dates[skill]);
-    text.appendChild(date);
-  }
-
-  label.appendChild(box);
-  label.appendChild(text);
-  row.appendChild(label);
+  const status = document.createElement("span");
+  status.className = "skill-status";
+  status.textContent = level === 0
+    ? "Not yet"
+    : LEVELS[level] + " · " + niceDate(trainee.dates[skill.name] || today());
+  text.appendChild(status);
+  row.appendChild(text);
 
   // The note button: ✎ to add a note, 📝 when there is one
   const noteButton = document.createElement("button");
   noteButton.type = "button";
   noteButton.className = "note-button";
   noteButton.textContent = note ? "📝" : "✎";
-  noteButton.setAttribute("aria-label", (note ? "Edit" : "Add") + " a note for " + skill);
+  noteButton.setAttribute("aria-label", (note ? "Edit" : "Add") + " a note for " + skill.name);
   noteButton.addEventListener("click", function () {
-    openNote = openNote === skill ? null : skill;
+    openNote = openNote === skill.name ? null : skill.name;
     drawChecklist();
     const input = checklist.querySelector(".note-input");
     if (input) {
@@ -456,16 +491,47 @@ function drawSkillRow(trainee, skill) {
   });
   row.appendChild(noteButton);
 
-  if (openNote === skill) {
+  // The rating buttons: Shown, Practicing, Confident
+  const rating = document.createElement("div");
+  rating.className = "rating";
+  rating.setAttribute("role", "group");
+  rating.setAttribute("aria-label", "Rating for " + skill.name);
+  for (let value = 1; value <= TOP; value = value + 1) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "rate rate-" + value;
+    button.textContent = LEVELS[value];
+    button.setAttribute("aria-pressed", level === value ? "true" : "false");
+    button.addEventListener("click", function () {
+      rateSkill(trainee, skill.name, value);
+    });
+    rating.appendChild(button);
+  }
+  row.appendChild(rating);
+
+  // How to teach it, from skills.json (tap to open)
+  if (skill.how) {
+    const how = document.createElement("details");
+    how.className = "how";
+    const summary = document.createElement("summary");
+    summary.textContent = "How to teach it";
+    const steps = document.createElement("p");
+    steps.textContent = skill.how;
+    how.appendChild(summary);
+    how.appendChild(steps);
+    row.appendChild(how);
+  }
+
+  if (openNote === skill.name) {
     // The note box: saves when the trainer presses Enter or taps away
     const input = document.createElement("input");
     input.type = "text";
     input.className = "note-input";
-    input.placeholder = "e.g. needs more practice on latte art";
-    input.setAttribute("aria-label", "Note for " + skill);
+    input.placeholder = "e.g. needs more practice on milk texture";
+    input.setAttribute("aria-label", "Note for " + skill.name);
     input.value = note || "";
     input.addEventListener("change", function () {
-      setNote(trainee, skill, input.value);
+      setNote(trainee, skill.name, input.value);
     });
     row.appendChild(input);
   } else if (note) {
