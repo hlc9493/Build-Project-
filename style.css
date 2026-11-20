@@ -151,8 +151,22 @@ select {
   font-weight: 600;
 }
 
-#progress-text.error {
+#progress-text {
+  margin-bottom: 0;
+}
+
+.counts {
+  margin: 4px 0 0;
+}
+
+.error {
   color: var(--danger);
+  font-weight: 600;
+}
+
+/* Anything marked hidden stays hidden, whatever its other styles say */
+[hidden] {
+  display: none !important;
 }
 
 /* Station-ready badges */
@@ -275,42 +289,41 @@ select {
   font-style: italic;
 }
 
-/* Checklist rows */
+/* Skill rows: name and status, note button, rating buttons, how-to */
 
 .skill-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0 8px;
-  padding: 10px 0;
+  gap: 8px;
+  padding: 12px 0;
   border-top: 1px solid var(--line);
 }
 
-.skill {
+.skill-text {
   flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
   min-width: 0;
 }
 
-.skill input {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-  accent-color: var(--green);
+.skill-name {
+  display: block;
+  font-weight: 600;
 }
 
-.skill-row.done .skill-name {
-  color: var(--muted);
-  text-decoration: line-through;
-}
-
-.skill-date {
+.skill-status {
   display: block;
   font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.level-1 .skill-status,
+.level-2 .skill-status {
+  color: var(--caramel);
+}
+
+.level-3 .skill-status {
   color: var(--green);
+  font-weight: 600;
 }
 
 .note-button {
@@ -324,9 +337,65 @@ select {
   cursor: pointer;
 }
 
+.rating {
+  flex-basis: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.rate {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 8px 4px;
+  border: 1px solid #d6c8b8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.rate[aria-pressed="true"] {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.rate-1[aria-pressed="true"] {
+  background: #d9a86c;
+  border-color: #d9a86c;
+}
+
+.rate-2[aria-pressed="true"] {
+  background: var(--caramel);
+  border-color: var(--caramel);
+}
+
+.rate-3[aria-pressed="true"] {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.how {
+  flex-basis: 100%;
+  font-size: 0.9rem;
+}
+
+.how summary {
+  cursor: pointer;
+  color: var(--roast);
+  font-weight: 600;
+}
+
+.how p {
+  margin: 6px 0 0;
+  padding: 10px;
+  background: var(--cream);
+  border-radius: 8px;
+}
+
 .note-text {
   flex-basis: 100%;
-  margin: 6px 0 0 34px;
+  margin: 0;
   font-size: 0.9rem;
   font-style: italic;
   color: var(--roast);
@@ -334,8 +403,7 @@ select {
 
 .note-input {
   flex-basis: 100%;
-  margin: 8px 0 0 34px;
-  width: calc(100% - 34px);
+  width: 100%;
 }
 
 /* Celebration */
