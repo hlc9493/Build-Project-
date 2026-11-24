@@ -2,7 +2,7 @@
   "categories": [
     {
       "name": "Register and customers",
-      "icon": "🧾",
+      "icon": "to-go-cup.png",
       "badge": "Register ready",
       "skills": [
         {
@@ -25,7 +25,7 @@
     },
     {
       "name": "Bar",
-      "icon": "☕",
+      "icon": "portafilter.png",
       "badge": "Bar ready",
       "skills": [
         {
@@ -52,7 +52,7 @@
     },
     {
       "name": "Food",
-      "icon": "🥐",
+      "icon": "croissant.png",
       "badge": "Food ready",
       "skills": [
         {
@@ -67,7 +67,7 @@
     },
     {
       "name": "Cleaning and closing",
-      "icon": "🧽",
+      "icon": "kettle.png",
       "badge": "Closing ready",
       "skills": [
         {
