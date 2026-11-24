@@ -24,3 +24,13 @@ Milestones
 - **Blocked:** Nothing right now. Known limit: progress saves on one
   device only, so a second trainer's phone won't see it. Sharing would
   need a server, which is out of scope.
+
+Status update 3 (Nov 20, after professor feedback)
+Done: Added a team overview, station-ready badges, dates and notes, a coffee-shop theme and a two-column layout for computer screens (Nov 19). Asked my professor for feedback by email.
+Feedback received: hide the trainee dropdown when there are no trainees, so a new user has one clear path; use ratings instead of checkboxes to track quality, not just completion; optionally add instructions for each task.
+Next: Make all three changes, then finish the measurement, README and reflection by the new due date, Tue Nov 24.
+Blocked: Nothing.
+
+Measuring the improvement
+Question timed: "What has this trainee not been trained on yet, and what should they work on next?" Timed for three trainees with my old method and three with the app.
+
