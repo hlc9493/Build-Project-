@@ -65,8 +65,8 @@ should they work on next?"
 
 | Method | Average time (3 trainees) |
 |--------|---------------------------|
-| Before: [how it's done today] | [ ] seconds |
-| After: this app | [ ] seconds |
+| Before: Starbucks Course | 1-2 hours|
+| After: this app | 5-10 minutes |
 
 Changes from feedback
 After professor feedback on Nov 20:
