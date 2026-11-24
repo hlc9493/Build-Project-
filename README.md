@@ -68,26 +68,18 @@ should they work on next?"
 | Before: [how it's done today] | [ ] seconds |
 | After: this app | [ ] seconds |
 
-## Changes from feedback
-
+Changes from feedback
 After professor feedback on Nov 20:
-
-- A new user sees one clear first step, "Add your first trainee", instead of
-  an empty dropdown.
-- Checkboxes became ratings, so the app tracks how well a skill is done, not
-  just whether it was covered.
-- Each skill now has "how to teach it" instructions.
-
-## Limits and privacy
-
-- Progress is saved on one device only. A second trainer's phone won't see it;
-  sharing between devices would need a server, which is outside this project's
-  scope.
-- No logins, no server and no cost: it runs on GitHub Pages' free tier.
-- Trainee names stay in the trainer's browser and never go into this repo.
-  Use first names or made-up names only.
-
-## Project documents
-
-- `PLAN.md`: problem, milestones, critical path, status updates and timing
-- Reflection and AI critique: submitted on myCourses
+A new user sees one clear first step, "Add your first trainee", instead of an empty dropdown.
+Checkboxes became ratings, so the app tracks how well a skill is done, not just whether it was covered.
+Each skill now has "how to teach it" instructions.
+Limits and privacy
+Progress is saved on one device only. A second trainer's phone won't see it; sharing between devices would need a server, which is outside this project's scope.
+No logins, no server and no cost: it runs on GitHub Pages' free tier.
+Trainee names stay in the trainer's browser and never go into this repo. Use first names or made-up names only.
+Credits
+Coffee equipment icons (mug, to-go cup, portafilter, kettle): [Hannah: name of the set] by [artist], from [site and link]
+Croissant icon: [Hannah: name of the set] by [artist], from [site and link]
+Project documents
+PLAN.md: problem, milestones, critical path, status updates and timing
+Reflection and AI critique: submitted on myCourses
