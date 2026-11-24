@@ -435,7 +435,8 @@ function drawChecklist() {
     card.className = "card";
 
     const heading = document.createElement("h2");
-    heading.textContent = (category.icon || "☕") + " " + category.name;
+    heading.appendChild(makeIcon(category.icon));
+    heading.appendChild(document.createTextNode(category.name));
     if (stationReady(trainee, category)) {
       const ready = document.createElement("span");
       ready.className = "ready-tag";
@@ -542,6 +543,23 @@ function drawSkillRow(trainee, skill) {
   }
 
   return row;
+}
+
+// A category icon from skills.json: an image file such as "images/cup.png",
+// or an emoji. With no icon set, it uses a coffee cup.
+function makeIcon(icon) {
+  icon = icon || "☕";
+  if (/\.(png|gif|svg|jpe?g|webp)$/i.test(icon)) {
+    const image = document.createElement("img");
+    image.className = "category-icon";
+    image.src = icon;
+    image.alt = "";
+    return image;
+  }
+  const emoji = document.createElement("span");
+  emoji.setAttribute("aria-hidden", "true");
+  emoji.textContent = icon;
+  return emoji;
 }
 
 // Falling coffee beans and stars, cleared after a few seconds.
