@@ -195,5 +195,5 @@ Question; "What has this trainee not been trained on yet, and what
 should they work on next?" 
 
 | Method 
-| Before: Starbucks courses
-| After: this app 
+| Before: Starbucks courses / Time: 1-2 hours per section 
+| After: this app / 5-10 minutes
